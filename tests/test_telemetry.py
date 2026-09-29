@@ -7,7 +7,7 @@ Tout le reste est à écrire — voir le TD 1.
 import pytest
 
 from fleet_api.models import Position
-from fleet_api.telemetry import battery_percentage, distance_m
+from fleet_api.telemetry import battery_percentage, distance_m, path_length_m, average_speed_mps, estimate_runtime_minutes, detect_voltage_dropouts
 
 # ---------------------------------------------------------------------------
 # Exemple 1 — un test simple, avec un cas nominal et les deux bornes.
@@ -59,3 +59,34 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 # Écrivez-les en vous appuyant sur les docstrings, qui font foi.
 # Trois de ces fonctions ne respectent pas leur spécification.
 # ---------------------------------------------------------------------------
+
+def test_is_low_battery(battery_pct, threshold_pct):
+    assert battery_pct <= threshold_pct == True
+
+def test_path_length_m(positions: list[Position]):
+    assert path_length_m(positions) != 0.0
+
+def test_average_speed_mps(path_length_m: float, elapsed_s: float):
+    assert elapsed_s != 0
+    assert average_speed_mps(path_length_m, elapsed_s) != 0
+    assert average_speed_mps(path_length_m, elapsed_s) is None == False
+
+def test_estimate_runtime_minutes(
+    battery_pct: float, drain_pct_per_min: float
+) :
+    assert drain_pct_per_min != 0
+    assert estimate_runtime_minutes(battery_pct, drain_pct_per_min) != 0
+    assert estimate_runtime_minutes(battery_pct, drain_pct_per_min) is None == False
+
+def test_median_voltage_mv(readings):
+    assert len(readings) == 0 
+
+def test_robot_state(reading, now_s, threshold_pct, grace_s):
+    assert ((now_s - reading.timestamp_s) > grace_s) == True
+    assert threshold_pct > 0
+
+def test_detect_voltage_dropouts(readings):
+    assert len(readings) == 0
+
+def test_fleet_summary(readings, threshold_pct) : 
+    assert len(readings) == 0
