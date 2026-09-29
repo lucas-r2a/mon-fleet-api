@@ -6,8 +6,10 @@ Tout le reste est à écrire — voir le TD 1.
 
 import pytest
 
-from fleet_api.models import Position
-from fleet_api.telemetry import battery_percentage, distance_m, path_length_m, average_speed_mps, estimate_runtime_minutes, detect_voltage_dropouts
+from fleet_api.models import Position, Reading, RobotState
+from fleet_api.telemetry import (
+    battery_percentage, distance_m, path_length_m, detect_voltage_dropouts,robot_state,
+    average_speed_mps, estimate_runtime_minutes, median_voltage_mv, is_low_battery, fleet_summary, Position, Reading, RobotState,)
 
 # ---------------------------------------------------------------------------
 # Exemple 1 — un test simple, avec un cas nominal et les deux bornes.
@@ -60,33 +62,71 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 # Trois de ces fonctions ne respectent pas leur spécification.
 # ---------------------------------------------------------------------------
 
-def test_is_low_battery(battery_pct, threshold_pct):
-    assert battery_pct <= threshold_pct == True
+@pytest.mark.parametrize(
+    ("battery_pct", "attendu"),
+    [
+        (15.0, True),  # triplet pythagoricien
+        (50.0, False),  # distance à soi-même
+    ],
+)
+def test_is_low_battery(battery_pct, attendu):
+    assert is_low_battery(battery_pct) is attendu
 
-def test_path_length_m(positions: list[Position]):
-    assert path_length_m(positions) != 0.0
+def test_path_length():
+    assert path_length_m([
+        Position(0, 0),
+        Position(3, 4),
+    ]) == 5.0
 
-def test_average_speed_mps(path_length_m: float, elapsed_s: float):
-    assert elapsed_s != 0
-    assert average_speed_mps(path_length_m, elapsed_s) != 0
-    assert average_speed_mps(path_length_m, elapsed_s) is None == False
+    assert path_length_m([Position(0, 0)]) == 0.0
+    assert path_length_m([]) == 0.0
 
-def test_estimate_runtime_minutes(
-    battery_pct: float, drain_pct_per_min: float
-) :
-    assert drain_pct_per_min != 0
-    assert estimate_runtime_minutes(battery_pct, drain_pct_per_min) != 0
-    assert estimate_runtime_minutes(battery_pct, drain_pct_per_min) is None == False
 
-def test_median_voltage_mv(readings):
-    assert len(readings) == 0 
+def test_average_speed():
+    assert average_speed_mps(10.0, 5.0) == 2.0
+    assert average_speed_mps(10.0, 0.0) is None
 
-def test_robot_state(reading, now_s, threshold_pct, grace_s):
-    assert ((now_s - reading.timestamp_s) > grace_s) == True
-    assert threshold_pct > 0
 
-def test_detect_voltage_dropouts(readings):
-    assert len(readings) == 0
+def test_estimate_runtime():
+    assert estimate_runtime_minutes(50.0, 2.0) == 25.0
+    assert estimate_runtime_minutes(50.0, 0.0) is None
 
-def test_fleet_summary(readings, threshold_pct) : 
-    assert len(readings) == 0
+def test_robot_state():
+    reading = Reading("R1", 100.0, 12600, Position(0, 0))
+
+    assert robot_state(reading, 101.0) == RobotState.OPERATIONAL
+
+    reading = Reading("R1", 100.0, 12600, Position(0, 0), True)
+
+    assert robot_state(reading, 101.0) == RobotState.CHARGING
+
+
+def test_detect_voltage_dropouts():
+    readings = [
+        Reading("R1", 0, 4000, Position(0, 0)),
+        Reading("R1", 1, 3900, Position(1, 0)),
+        Reading("R1", 2, 3700, Position(2, 0)),
+    ]
+
+    assert detect_voltage_dropouts(readings, 100) == [2]
+
+
+def test_fleet_summary():
+    readings = [
+        Reading("R1", 0, 4000, Position(0, 0)),
+        Reading("R2", 1, 3800, Position(1, 0)),
+    ]
+
+    result = fleet_summary(readings)
+
+    assert result["robot_count"] == 2
+    assert result["average_battery_pct"] >= 0
+    assert result["low_battery_count"] >= 0
+
+
+def test_fleet_summary_empty():
+    assert fleet_summary([]) == {
+        "robot_count": 0,
+        "average_battery_pct": 0.0,
+        "low_battery_count": 0,
+    }
