@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses:  github/actions/setup
         with:
-          python-version: '3.14'
+          python-version: '3.12'
 
       - name: lint
         run: uv run ruff check . 
@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses:  github/actions/setup
         with:
-          python-version: '3.14'
+          python-version: '3.12'
 
       - name: Lancer les tests couverture
         run: uv run pytest -v --cov=fleet_api --cov-report=html --cov-report=term
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses:  github/actions/setup
         with:
-          python-version: '3.14'
+          python-version: '3.12'
 
       - name: build
         run: uv build
