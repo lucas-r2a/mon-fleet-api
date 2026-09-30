@@ -15,6 +15,6 @@ runs:
 
     with:
       enable-cache: true
-      
+
   - shell: bash
     run: uv sync --python ${{ inputs.python-version }}
