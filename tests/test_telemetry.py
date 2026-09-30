@@ -70,6 +70,7 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 # Trois de ces fonctions ne respectent pas leur spécification.
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize(
     ("battery_pct", "attendu"),
     [
@@ -80,11 +81,17 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 def test_is_low_battery(battery_pct, attendu):
     assert is_low_battery(battery_pct) is attendu
 
+
 def test_path_length():
-    assert path_length_m([
-        Position(0, 0),
-        Position(3, 4),
-    ]) == 5.0
+    assert (
+        path_length_m(
+            [
+                Position(0, 0),
+                Position(3, 4),
+            ]
+        )
+        == 5.0
+    )
 
     assert path_length_m([Position(0, 0)]) == 0.0
     assert path_length_m([]) == 0.0
@@ -98,6 +105,7 @@ def test_average_speed():
 def test_estimate_runtime():
     assert estimate_runtime_minutes(50.0, 2.0) == 25.0
     assert estimate_runtime_minutes(50.0, 0.0) is None
+
 
 def test_robot_state():
     reading = Reading("R1", 100.0, 12600, Position(0, 0))
