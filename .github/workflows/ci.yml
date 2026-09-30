@@ -1,6 +1,8 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -8,11 +10,13 @@ jobs:
     steps: 
       - uses: actions/checkout@v7
 
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
-
-      - name: Installer les dépendances
-        run: uv sync
+      - name: lint
+        uses: uv run ruff check . 
 
       - name: Lancer les tests
         run: uv run pytest -v
+
+      - name: build
+        run: uv build
+
+      
