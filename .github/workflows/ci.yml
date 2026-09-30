@@ -14,6 +14,8 @@ jobs:
 
       - name: Installer uv
         uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
 
       - name: Installer les dépendances
         run: uv sync
@@ -31,6 +33,8 @@ jobs:
 
       - name: Installer uv
         uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
 
       - name: Installer les dépendances
         run: uv sync
@@ -45,6 +49,8 @@ jobs:
 
       - name: Installer uv
         uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
 
       - name: Installer les dépendances
         run: uv sync
