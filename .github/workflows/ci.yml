@@ -1,26 +1,25 @@
 name: CI
 
 on:
-  pull_request: 
-  push:
-    branches: [main]
+  pull_request:
 
-jobs:
+jobs:              
   lint:
     runs-on: ubuntu-latest
     steps:
     
       - uses: actions/checkout@v7
-      - uses:  github/actions/setup
-        with:
-          python-version: '3.12'
+      - uses:  .github/actions/setup
 
       - name: lint
         run: uv run ruff check . 
       
       - name: formattage
         run: uv run ruff format --check .
+
   test:
+    needs: changements
+    if: needs.changements.outputs.code == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -29,9 +28,9 @@ jobs:
     steps: 
 
       - uses: actions/checkout@v7
-      - uses:  github/actions/setup
+      - uses:  .github/actions/setup
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python-version }}
 
       - name: Lancer les tests couverture
         run: uv run pytest -v --cov=fleet_api --cov-report=html --cov-report=term
@@ -40,14 +39,13 @@ jobs:
           name: couverture-py${{ matrix.python-version }}
           path: htmlcov/
           retention-days: 7
+
   build:
     runs-on: ubuntu-latest
     steps:
 
       - uses: actions/checkout@v7
-      - uses:  github/actions/setup
-        with:
-          python-version: '3.12'
+      - uses:  .github/actions/setup
 
       - name: build
         run: uv build
