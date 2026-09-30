@@ -8,8 +8,16 @@ import pytest
 
 from fleet_api.models import Position, Reading, RobotState
 from fleet_api.telemetry import (
-    battery_percentage, distance_m, path_length_m, detect_voltage_dropouts,robot_state,
-    average_speed_mps, estimate_runtime_minutes, median_voltage_mv, is_low_battery, fleet_summary, Position, Reading, RobotState,)
+    average_speed_mps,
+    battery_percentage,
+    detect_voltage_dropouts,
+    distance_m,
+    estimate_runtime_minutes,
+    fleet_summary,
+    is_low_battery,
+    path_length_m,
+    robot_state,
+)
 
 # ---------------------------------------------------------------------------
 # Exemple 1 — un test simple, avec un cas nominal et les deux bornes.
@@ -62,6 +70,7 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 # Trois de ces fonctions ne respectent pas leur spécification.
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize(
     ("battery_pct", "attendu"),
     [
@@ -72,11 +81,17 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 def test_is_low_battery(battery_pct, attendu):
     assert is_low_battery(battery_pct) is attendu
 
+
 def test_path_length():
-    assert path_length_m([
-        Position(0, 0),
-        Position(3, 4),
-    ]) == 5.0
+    assert (
+        path_length_m(
+            [
+                Position(0, 0),
+                Position(3, 4),
+            ]
+        )
+        == 5.0
+    )
 
     assert path_length_m([Position(0, 0)]) == 0.0
     assert path_length_m([]) == 0.0
@@ -90,6 +105,7 @@ def test_average_speed():
 def test_estimate_runtime():
     assert estimate_runtime_minutes(50.0, 2.0) == 25.0
     assert estimate_runtime_minutes(50.0, 0.0) is None
+
 
 def test_robot_state():
     reading = Reading("R1", 100.0, 12600, Position(0, 0))
