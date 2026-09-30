@@ -8,8 +8,16 @@ import pytest
 
 from fleet_api.models import Position, Reading, RobotState
 from fleet_api.telemetry import (
-    battery_percentage, distance_m, path_length_m, detect_voltage_dropouts,robot_state,
-    average_speed_mps, estimate_runtime_minutes, median_voltage_mv, is_low_battery, fleet_summary, Position, Reading, RobotState,)
+    average_speed_mps,
+    battery_percentage,
+    detect_voltage_dropouts,
+    distance_m,
+    estimate_runtime_minutes,
+    fleet_summary,
+    is_low_battery,
+    path_length_m,
+    robot_state,
+)
 
 # ---------------------------------------------------------------------------
 # Exemple 1 — un test simple, avec un cas nominal et les deux bornes.
