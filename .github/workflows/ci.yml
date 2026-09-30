@@ -1,11 +1,31 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches: [main]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v7
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v10.0.1
+
+      - name: Installer les dépendances
+        run: uv sync
+
+      - name: lint
+        run: uv run ruff check . 
+      
+      - name: formattage
+        run: uv run ruff format --check .
   test:
     runs-on: ubuntu-latest
     steps: 
+
       - uses: actions/checkout@v7
 
       - name: Installer uv
@@ -16,3 +36,19 @@ jobs:
 
       - name: Lancer les tests
         run: uv run pytest -v
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v7
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v10.0.1
+
+      - name: Installer les dépendances
+        run: uv sync
+
+      - name: build
+        run: uv build
+
+      
