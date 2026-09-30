@@ -11,14 +11,9 @@ jobs:
     steps:
     
       - uses: actions/checkout@v7
-
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
+      - uses:  github/actions/setup
         with:
-          enable-cache: true
-          
-      - name: Installer les dependances
-        run: uv sync
+          python-version: '3.14'
 
       - name: lint
         run: uv run ruff check . 
@@ -34,16 +29,9 @@ jobs:
     steps: 
 
       - uses: actions/checkout@v7
-
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
+      - uses:  github/actions/setup
         with:
-          enable-cache: true
-          python-version: ${{ matrix.python-version }}  
-          
-
-      - name: Installer les dépendances
-        run: uv sync
+          python-version: '3.14'
 
       - name: Lancer les tests couverture
         run: uv run pytest -v --cov=fleet_api --cov-report=html --cov-report=term
@@ -57,14 +45,9 @@ jobs:
     steps:
 
       - uses: actions/checkout@v7
-
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
+      - uses:  github/actions/setup
         with:
-          enable-cache: true
-
-      - name: Installer les dépendances
-        run: uv sync
+          python-version: '3.14'
 
       - name: build
         run: uv build
