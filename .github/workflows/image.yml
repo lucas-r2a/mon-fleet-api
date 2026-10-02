@@ -31,7 +31,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
       - uses: docker/build-push-action@v7
         with:
-          file: ./path/to/Dockerfile
+          file: ./Dockerfile.v3
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
