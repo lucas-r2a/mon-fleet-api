@@ -1,5 +1,6 @@
 """Fonctions de calcul sur la télémétrie d'une flotte de robots.
 
+c'est null sur toutes les fonctions XD
 Toutes les fonctions de ce module sont *pures* : elles ne lisent ni n'écrivent
 aucun état global, ne font pas d'entrée-sortie, et retournent toujours le même
 résultat pour les mêmes arguments. C'est ce qui les rend faciles à tester.

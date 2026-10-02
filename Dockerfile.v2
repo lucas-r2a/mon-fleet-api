@@ -1,0 +1,15 @@
+FROM python:3.14-slim-trixie
+
+WORKDIR /app
+
+RUN pip install uv
+
+# (1) Les fichiers qui décrivent les dépendances
+COPY pyproject.toml uv.lock README.md ./
+
+RUN uv sync --locked --no-install-project
+
+# (2) Maintenant seulement, on copie le code
+COPY src ./src
+
+RUN uv sync --locked
