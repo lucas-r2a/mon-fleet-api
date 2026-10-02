@@ -1,55 +1,60 @@
 name: CI
 
 on:
-  pull_request: 
+  pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    
+
       - uses: actions/checkout@v7
-
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
-
-      - name: Installer les dépendances
-        run: uv sync
+      - uses:  ./.github/actions/setup
 
       - name: lint
-        run: uv run ruff check . 
-      
+        run: uv run ruff check .
+
       - name: formattage
         run: uv run ruff format --check .
+
   test:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
-    steps: 
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12', '3.13', '3.14']
+    steps:
 
       - uses: actions/checkout@v7
+      - uses:  ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
 
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
+      - name: Lancer les tests couverture
+        run: uv run pytest -v --cov=fleet_api --cov-report=html --cov-report=term
+      - uses: actions/upload-artifact@v7
+        with:
+          name: couverture-py${{ matrix.python-version }}
+          path: htmlcov/
+          retention-days: 7
 
-      - name: Installer les dépendances
-        run: uv sync
-
-      - name: Lancer les tests
-        run: uv run pytest -v
   build:
     runs-on: ubuntu-latest
     steps:
 
       - uses: actions/checkout@v7
-
-      - name: Installer uv
-        uses: astral-sh/setup-uv@v10.0.1
-
-      - name: Installer les dépendances
-        run: uv sync
+      - uses:  ./.github/actions/setup
 
       - name: build
         run: uv build
-
-      
