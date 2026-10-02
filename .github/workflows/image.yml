@@ -20,3 +20,5 @@ jobs:
         push: true
         tags: ghcr.io/<votre-compte-en-minuscules>\
           /fleet-api:sha-${{ g
+        cache-from: type=gha
+        cache-to: type=gha,mode=min
