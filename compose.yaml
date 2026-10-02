@@ -19,7 +19,7 @@ services:
  api:
   build:
     context: .
-    dockerfile: Dockerfile.v3
+    dockerfile: Dockerfile
   environment:
     DATABASE_URL: postgresql://app:app@db:5432/fleet
   ports:
